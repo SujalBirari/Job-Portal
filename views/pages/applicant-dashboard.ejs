@@ -1,0 +1,35 @@
+<%- include('../partials/header', { title: "Applicant Dashboard" }) %>
+
+    <main class="dashboard">
+        <h2>Welcome, <%= email %>
+        </h2>
+
+        <section class="applications">
+            <h3>Your Applications</h3>
+
+            <% if (applications.length===0) { %>
+                <p>You haven’t applied to any jobs yet.</p>
+                <% } else { %>
+                    <div class="applications-grid">
+                        <% applications.forEach(app=> { %>
+                            <div class="app-card">
+                                <h4>
+                                    <%= app.jobId.title %>
+                                </h4>
+                                <p><strong>Company:</strong>
+                                    <%= app.jobId.company %>
+                                </p>
+                                <p><strong>Applied On:</strong>
+                                    <%= app.applicationDate.toDateString() %>
+                                </p>
+
+                                </p>
+                                <a href="/jobs/<%= app.jobId._id %>" class="btn-primary">View Job</a>
+                            </div>
+                            <% }) %>
+                    </div>
+                    <% } %>
+        </section>
+    </main>
+
+    <%- include('../partials/footer') %>

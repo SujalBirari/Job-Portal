@@ -1,0 +1,53 @@
+<%- include('../partials/header', { title: "Recruiter Dashboard" }) %>
+
+    <main class="dashboard">
+        <h2>Welcome, <%= email %>
+        </h2>
+
+        <section class="jobs">
+            <h3>Your Job Postings</h3>
+
+            <% if (jobsWithApplications.length===0) { %>
+                <p>You haven’t posted any jobs yet.</p>
+                <% } else { %>
+                    <div class="jobs-grid">
+                        <% jobsWithApplications.forEach(item=> { %>
+                            <div class="job-card">
+                                <h4>
+                                    <%= item.job.title %>
+                                </h4>
+                                <p><strong>Company:</strong>
+                                    <%= item.job.company %>
+                                </p>
+                                <p><strong>Posted At:</strong>
+                                    <%= item.job.postedAt ? item.job.postedAt.toDateString() : "N/A" %>
+                                </p>
+                                <p>
+                                    <%= item.job.description %>
+                                </p>
+
+                                <h5>Applications:</h5>
+                                <% if (item.applications.length===0) { %>
+                                    <p>No applications yet.</p>
+                                    <% } else { %>
+                                        <ul class="application-list">
+                                            <% item.applications.forEach(app=> { %>
+                                                <li>
+                                                    <strong>
+                                                        <%= app.applicantName %>
+                                                    </strong>
+                                                    (<%= app.applicantEmail %>) –
+                                                        <a href="<%= app.resumeLink %>" target="_blank">Resume</a>
+                                                        <em>Status: <%= app.status %></em>
+                                                </li>
+                                                <% }) %>
+                                        </ul>
+                                        <% } %>
+                            </div>
+                            <% }) %>
+                    </div>
+                    <% } %>
+        </section>
+    </main>
+
+    <%- include('../partials/footer') %>

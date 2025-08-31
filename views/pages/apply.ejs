@@ -1,0 +1,27 @@
+<%- include('../partials/header', { title: "Apply for Job" }) %>
+
+    <main class="apply-page">
+        <h2>Apply for <%= job.title %> at <%= job.company %>
+        </h2>
+        <form action="/jobs/<%= job._id %>/apply" method="POST" class="apply-form">
+            <div class="form-group">
+                <label for="applicantName">Full Name</label>
+                <input type="text" id="applicantName" name="applicantName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="applicantEmail">Email</label>
+                <input type="email" id="applicantEmail" name="applicantEmail" required>
+            </div>
+
+            <div class="form-group">
+                <label for="resumeLink">Resume Link</label>
+                <input type="url" id="resumeLink" name="resumeLink" placeholder="https://example.com/resume.pdf">
+            </div>
+
+            <button type="submit" class="btn apply-btn">Submit Application</button>
+            <a href="/jobs/<%= job._id %>" class="btn">Cancel</a>
+        </form>
+    </main>
+
+    <%- include('../partials/footer') %>

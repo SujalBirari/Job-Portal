@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title || "Job Portal" %>
+    </title>
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-left">
+                <a href="/">Home</a>
+                <a href="/jobs">Jobs</a>
+                <a id="dashboard-link" href="#" style="display:none;">Dashboard</a>
+                <a href="/contact">Contact</a>
+            </div>
+
+            <div class="nav-right" id="auth-links">
+                <!-- By default show signup/signin -->
+                <a href="/auth/signup" id="signup-header">Sign Up</a>
+                <a href="/auth/signin" id="signin-header">Sign In</a>
+                <a href="#" id="signout-header" style="display:none;">Sign Out</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+
+        <script>
+            function updateHeaderUI() {
+                const user = JSON.parse(sessionStorage.getItem("user") || "null");
+                const dashboardLink = document.getElementById("dashboard-link");
+                const signUpHeader = document.getElementById("signup-header");
+                const signInHeader = document.getElementById("signin-header");
+                const signOutHeader = document.getElementById("signout-header");
+
+                if (user) {
+                    // Show Dashboard link based on role
+                    dashboardLink.style.display = "inline-block";
+                    dashboardLink.href = user.type === "Recruiter"
+                        ? `/recruiters/dashboard/${user.email}`
+                        : `/applicants/dashboard/${user.email}`;
+
+                    // Hide sign up/in, show sign out
+                    signUpHeader.style.display = "none";
+                    signInHeader.style.display = "none";
+                    signOutHeader.style.display = "inline-block";
+                } else {
+                    dashboardLink.style.display = "none";
+                    signUpHeader.style.display = "inline-block";
+                    signInHeader.style.display = "inline-block";
+                    signOutHeader.style.display = "none";
+                }
+            }
+
+            window.addEventListener("DOMContentLoaded", updateHeaderUI);
+
+            document.getElementById("signout-header")?.addEventListener("click", () => {
+                sessionStorage.removeItem("user");
+                updateHeaderUI();
+            });
+        </script>

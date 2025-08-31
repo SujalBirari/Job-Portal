@@ -1,0 +1,170 @@
+<%- include('../partials/header', { title: "Job Portal - Find Your Dream Job" }) %>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Find Your Dream Job</h1>
+                <p>Connecting talented people with top companies</p>
+                <a href="/jobs" class="btn-primary">Browse Jobs</a>
+                <a href="jobs/post/new" class="btn-secondary">Post a Job</a>
+            </div>
+
+            <!-- 🔹 Auth box inside hero -->
+            <div class="auth-box">
+                <div class="tabs">
+                    <button id="signup-tab" class="active">Sign Up</button>
+                    <button id="signin-tab">Sign In</button>
+                </div>
+
+                <!-- Signup form -->
+                <form id="signupForm" class="auth-form">
+                    <input type="email" name="email" placeholder="Email" required />
+                    <input type="password" name="password" placeholder="Password" required />
+
+                    <!-- Role Selector -->
+                    <select name="role" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <option value="Applicant">Applicant</option>
+                        <option value="Recruiter">Recruiter</option>
+                    </select>
+
+                    <button type="submit" class="btn-primary">Sign Up</button>
+                </form>
+
+                <!-- Signin form -->
+                <form id="signinForm" class="auth-form hidden">
+                    <input type="email" name="email" placeholder="Email" required />
+                    <input type="password" name="password" placeholder="Password" required />
+
+                    <!-- Role Selector -->
+                    <select name="role" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <option value="Applicant">Applicant</option>
+                        <option value="Recruiter">Recruiter</option>
+                    </select>
+
+                    <button type="submit" class="btn-secondary">Sign In</button>
+                </form>
+            </div>
+
+        </section>
+
+        <section class="features">
+            <h2>Why Choose Us?</h2>
+            <div class="feature-cards">
+                <div class="card">
+                    <h3>Fast & Easy</h3>
+                    <p>Quickly search and apply for jobs that match your skills.</p>
+                </div>
+                <div class="card">
+                    <h3>For Recruiters</h3>
+                    <p>Post jobs easily and get quality applications instantly.</p>
+                </div>
+                <div class="card">
+                    <h3>Trusted Platform</h3>
+                    <p>Secure, reliable, and used by professionals worldwide.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Tabs switching
+        const signupTab = document.getElementById("signup-tab");
+        const signinTab = document.getElementById("signin-tab");
+        const signupForm = document.getElementById("signupForm");
+        const signinForm = document.getElementById("signinForm");
+
+        signupTab.addEventListener("click", () => {
+            signupTab.classList.add("active");
+            signinTab.classList.remove("active");
+            signupForm.classList.remove("hidden");
+            signinForm.classList.add("hidden");
+        });
+
+        signinTab.addEventListener("click", () => {
+            signinTab.classList.add("active");
+            signupTab.classList.remove("active");
+            signinForm.classList.remove("hidden");
+            signupForm.classList.add("hidden");
+        });
+
+        // Signup
+        signupForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = e.target.email.value;
+            const password = e.target.password.value;
+            const type = e.target.role.value; // NEW
+
+            const res = await fetch("/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password, type })
+            });
+            const data = await res.json();
+            alert(data.message);
+
+            if (res.ok) {
+                sessionStorage.setItem("user", JSON.stringify(data.user));
+                window.location.href = type === "Recruiter"
+                    ? `/recruiters/dashboard/${email}`
+                    : `/applicants/dashboard/${email}`;
+            }
+        });
+
+        // Signin
+        signinForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = e.target.email.value;
+            const password = e.target.password.value;
+            const type = e.target.role.value; // NEW
+
+            const res = await fetch("/auth/signin", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password, type })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                sessionStorage.setItem("user", JSON.stringify(data.user));
+                alert("Signed in successfully!");
+                window.location.href = type === "Recruiter"
+                    ? `/recruiters/dashboard/${email}`
+                    : `/applicants/dashboard/${email}`;
+            } else {
+                alert(data.message);
+            }
+        });
+
+
+        function updateAuthUI() {
+            const user = sessionStorage.getItem("user");
+            const authBox = document.querySelector(".auth-box");
+            const signUpHeader = document.getElementById("signup-header");
+            const signInHeader = document.getElementById("signin-header");
+            const signOutHeader = document.getElementById("signout-header");
+
+            if (user) {
+                if (authBox) authBox.style.display = "none";
+                if (signUpHeader) signUpHeader.style.display = "none";
+                if (signInHeader) signInHeader.style.display = "none";
+                if (signOutHeader) signOutHeader.style.display = "inline-block";
+            } else {
+                if (authBox) authBox.style.display = "block";
+                if (signUpHeader) signUpHeader.style.display = "inline-block";
+                if (signInHeader) signInHeader.style.display = "inline-block";
+                if (signOutHeader) signOutHeader.style.display = "none";
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", updateAuthUI);
+
+        document.getElementById("signout-header")?.addEventListener("click", () => {
+            sessionStorage.removeItem("user");
+            updateAuthUI();
+            alert("Signed out!");
+        });
+    </script>
+
+    <%- include('../partials/footer') %>

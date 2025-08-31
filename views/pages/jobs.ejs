@@ -1,0 +1,24 @@
+<%- include('../partials/header', { title: "Jobs - Job Portal" }) %>
+
+    <main class="jobs-page">
+        <section class="jobs-list">
+            <h2>Available Jobs</h2>
+
+            <% if (jobs.length===0) { %>
+                <p>No jobs available right now. Please check back later.</p>
+                <% } else { %>
+                    <div class="jobs-grid">
+                        <% jobs.forEach(job=> { %>
+                            <%- include('../partials/job-card', { job }) %>
+                                <% }) %>
+                    </div>
+                    <% } %>
+        </section>
+
+        <% if (posted) { %>
+            <div class="alert success">Job posted successfully!</div>
+            <% } %>
+
+    </main>
+
+    <%- include('../partials/footer') %>
